@@ -1,17 +1,25 @@
 package com.example.modernuidashboards
+import android.R.attr.top
 import android.os.Bundle
+import androidx.compose.foundation.lazy.items
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,12 +35,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.graphics.toColorInt
@@ -60,6 +73,120 @@ fun MyUI() {
             SearchRow()
             Banner()
             Categories()
+            PopularCourses()
+            ItemList()
+        }
+    }
+}
+data class Items(
+    val title: String,
+    val name: String,
+    val price: Int,
+    val score: Double,
+    val picUrl: Int
+)
+@Composable
+fun ItemList() {
+  val people: List<Items> = listOf(
+      Items("Quick Learn C# Language", "MD: Ratul Master", 128, 4.6, R.drawable.cart),
+      Items("Full Course Android Kotlin", "MD: Fazle Rabbi", 170, 4.9, R.drawable.cart),
+      Items("Quick Learn C# Language", "MD: Ratul Master", 128, 4.6, R.drawable.cart),
+  )
+    LazyRow(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(people) { item ->
+            Column(
+                modifier = Modifier.height(250.dp)
+                    .width(250.dp)
+                    .shadow(3.dp)
+                    .background(Color.White, shape = RoundedCornerShape(10.dp))
+                    .fillMaxWidth()
+                    .clickable{
+                        println("Clicked On: ${item.name}")
+                    }
+            ) {
+                ConstraintLayout(modifier = Modifier.height(IntrinsicSize.Max)) {
+                    val (topImg, title, owner,ownerIcon, price, score, scoreIcon) = createRefs()
+                    Image(painter = painterResource(R.drawable.cart),
+                        contentDescription = null,
+                        Modifier.fillMaxWidth()
+                            .height(180.dp)
+                            .constrainAs(topImg) {
+                                top.linkTo(parent.top)
+                                start.linkTo(parent.start)
+                            },
+                        contentScale = ContentScale.Crop
+                    )
+                    Text(
+                        text = item.title,
+                       modifier =  Modifier
+                            .background(Color("#90000000".toColorInt()))
+                            .fillMaxWidth()
+                            .padding(6.dp)
+                            .constrainAs(title) {
+                                bottom.linkTo(topImg.bottom)
+                                start.linkTo(parent.start)
+                            },
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
+                    Image(
+                        painter = painterResource(R.drawable.cart),
+                        contentDescription = null,
+                        modifier = Modifier.constrainAs(ownerIcon) {
+                            start.linkTo(parent.start)
+                            top.linkTo(topImg.top)
+                        }
+                            .padding(start = 16.dp, top = 16.dp)
+                    )
+                    Text(
+                        text = item.name, modifier = Modifier.
+                        constrainAs(owner) {
+                            start.linkTo(ownerIcon.end)
+                            top.linkTo(ownerIcon.top)
+                            bottom.linkTo(ownerIcon.bottom)
+                        }
+                            .padding(start = 16.dp, top = 16.dp)
+                    )
+                    Text(
+                        text = "${item.price}",
+                        fontWeight = FontWeight.Bold,
+                        color = Color("#521c98".toColorInt()),
+                        modifier = Modifier.constrainAs(price) {
+                            start.linkTo(ownerIcon.start)
+                            top.linkTo(ownerIcon.bottom)
+                            bottom.linkTo(parent.bottom)
+                        }
+                    )
+                    Text(
+                        text = item.score.toString(),
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.constrainAs(score) {
+                            end.linkTo(parent.end)
+                            top.linkTo(price.top)
+                            bottom.linkTo(price.bottom)
+                        }
+                            .padding(end = 16.dp)
+                    )
+                    Image(painter = painterResource(R.drawable.cart),
+                        contentDescription = null,
+                        modifier = Modifier.constrainAs(scoreIcon) {
+                            end.linkTo(score.start)
+                            top.linkTo(score.top)
+                            bottom.linkTo(score.bottom)
+                        }
+                            .padding(end = 8.dp)
+                    )
+
+
+                }
+
+            }
         }
     }
 }
@@ -194,7 +321,12 @@ fun Categories() {
             color = Color("#521c98".toColorInt())
         )
     }
-    Row(){
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxWidth()
+            .padding(top = 8.dp, start = 16.dp, end = 16.dp)
+    ){
         Column(
             modifier = Modifier.weight(0.25f),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -287,6 +419,26 @@ fun Categories() {
                 color = Color("#521c98".toColorInt())
             )
         }
+    }
+}
+@Composable
+fun PopularCourses() {
+    Row(
+        modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)
+    ) {
+        Text(
+            text = "PopularCourses",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = Color.Black,
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = "see all",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = Color("#521c98".toColorInt())
+        )
     }
 }
 
