@@ -1,7 +1,5 @@
 package com.example.modernuidashboards
-import android.R.attr.top
 import android.os.Bundle
-import androidx.compose.foundation.lazy.items
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -20,10 +18,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -37,15 +37,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.graphics.toColorInt
@@ -60,8 +59,16 @@ class MainActivity : ComponentActivity() {
 }
 @Composable
 @Preview(showBackground = true)
+@Composable
 fun MyUI() {
-    Scaffold { paddingValues ->
+    val scaffoldState = rememberScaffoldState() // Declare scaffoldState
+
+    Scaffold(
+        scaffoldState = scaffoldState,
+        bottomBar = {
+            MyBottomBar()
+        }
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -78,6 +85,26 @@ fun MyUI() {
         }
     }
 }
+
+
+@Composable
+fun MyBottomBar() {
+    TODO("Not yet implemented")
+}
+@Composable
+fun PrepareBottomMenu(): List<BottomMenuItem>{
+    val BottomMenuItemList = arrayListOf<BottomMenuItem>()
+    BottomMenuItemList.add(
+        BottomMenuItem(
+            label = "Explorer",
+            icon = 
+        )
+    )
+}
+data class BottomMenuItem(
+    val label: String,
+    val icon: Painter
+)
 data class Items(
     val title: String,
     val name: String,
@@ -99,12 +126,13 @@ fun ItemList() {
     ) {
         items(people) { item ->
             Column(
-                modifier = Modifier.height(250.dp)
+                modifier = Modifier
+                    .height(250.dp)
                     .width(250.dp)
                     .shadow(3.dp)
                     .background(Color.White, shape = RoundedCornerShape(10.dp))
                     .fillMaxWidth()
-                    .clickable{
+                    .clickable {
                         println("Clicked On: ${item.name}")
                     }
             ) {
@@ -112,7 +140,8 @@ fun ItemList() {
                     val (topImg, title, owner,ownerIcon, price, score, scoreIcon) = createRefs()
                     Image(painter = painterResource(R.drawable.cart),
                         contentDescription = null,
-                        Modifier.fillMaxWidth()
+                        Modifier
+                            .fillMaxWidth()
                             .height(180.dp)
                             .constrainAs(topImg) {
                                 top.linkTo(parent.top)
@@ -123,13 +152,13 @@ fun ItemList() {
                     Text(
                         text = item.title,
                        modifier =  Modifier
-                            .background(Color("#90000000".toColorInt()))
-                            .fillMaxWidth()
-                            .padding(6.dp)
-                            .constrainAs(title) {
-                                bottom.linkTo(topImg.bottom)
-                                start.linkTo(parent.start)
-                            },
+                           .background(Color("#90000000".toColorInt()))
+                           .fillMaxWidth()
+                           .padding(6.dp)
+                           .constrainAs(title) {
+                               bottom.linkTo(topImg.bottom)
+                               start.linkTo(parent.start)
+                           },
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
                         color = Color.White,
@@ -138,19 +167,20 @@ fun ItemList() {
                     Image(
                         painter = painterResource(R.drawable.cart),
                         contentDescription = null,
-                        modifier = Modifier.constrainAs(ownerIcon) {
-                            start.linkTo(parent.start)
-                            top.linkTo(topImg.top)
-                        }
+                        modifier = Modifier
+                            .constrainAs(ownerIcon) {
+                                start.linkTo(parent.start)
+                                top.linkTo(topImg.top)
+                            }
                             .padding(start = 16.dp, top = 16.dp)
                     )
                     Text(
-                        text = item.name, modifier = Modifier.
-                        constrainAs(owner) {
-                            start.linkTo(ownerIcon.end)
-                            top.linkTo(ownerIcon.top)
-                            bottom.linkTo(ownerIcon.bottom)
-                        }
+                        text = item.name, modifier = Modifier
+                            .constrainAs(owner) {
+                                start.linkTo(ownerIcon.end)
+                                top.linkTo(ownerIcon.top)
+                                bottom.linkTo(ownerIcon.bottom)
+                            }
                             .padding(start = 16.dp, top = 16.dp)
                     )
                     Text(
@@ -166,20 +196,22 @@ fun ItemList() {
                     Text(
                         text = item.score.toString(),
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.constrainAs(score) {
-                            end.linkTo(parent.end)
-                            top.linkTo(price.top)
-                            bottom.linkTo(price.bottom)
-                        }
+                        modifier = Modifier
+                            .constrainAs(score) {
+                                end.linkTo(parent.end)
+                                top.linkTo(price.top)
+                                bottom.linkTo(price.bottom)
+                            }
                             .padding(end = 16.dp)
                     )
                     Image(painter = painterResource(R.drawable.cart),
                         contentDescription = null,
-                        modifier = Modifier.constrainAs(scoreIcon) {
-                            end.linkTo(score.start)
-                            top.linkTo(score.top)
-                            bottom.linkTo(score.bottom)
-                        }
+                        modifier = Modifier
+                            .constrainAs(scoreIcon) {
+                                end.linkTo(score.start)
+                                top.linkTo(score.top)
+                                bottom.linkTo(score.bottom)
+                            }
                             .padding(end = 8.dp)
                     )
 
@@ -324,7 +356,8 @@ fun Categories() {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(top = 8.dp, start = 16.dp, end = 16.dp)
     ){
         Column(
