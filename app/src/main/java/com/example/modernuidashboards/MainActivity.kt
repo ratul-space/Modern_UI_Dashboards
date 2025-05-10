@@ -1,7 +1,5 @@
 package com.example.modernuidashboards
 
-import android.R.attr.label
-import android.R.attr.onClick
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -27,8 +25,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -45,7 +46,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -68,6 +68,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun MyUI() {
@@ -93,16 +94,15 @@ fun MyUI() {
 
 @Composable
 fun MyBottomBar() {
-    val BottomMenuItemsList = PrepareBottomMenu()
+    val bottomMenuItemsList = PrepareBottomMenu()
     var selectedItem by remember { mutableStateOf("Profile") }
 
-    BottomAppBar(
-        cutoutShape = CircleShape,
-        backgroundColor = Color(0xFFF8F8F8),
-        elevation = 3.dp
+    NavigationBar(
+        containerColor = Color(0xFFF8F8F8),
+        tonalElevation = 3.dp
     ) {
-        BottomMenuItemsList.forEachIndexed { index, bottomMenuItem ->
-            BottomNavigationItem(
+        bottomMenuItemsList.forEachIndexed { index, bottomMenuItem ->
+            NavigationBarItem(
                 selected = (selectedItem == bottomMenuItem.label),
                 onClick = {
                     selectedItem = bottomMenuItem.label
@@ -122,8 +122,7 @@ fun MyBottomBar() {
                         modifier = Modifier.padding(4.dp)
                     )
                 },
-                alwaysShowLabel = true,
-                enabled = true
+                alwaysShowLabel = true
             )
         }
     }
@@ -131,37 +130,39 @@ fun MyBottomBar() {
 
 @Composable
 fun PrepareBottomMenu(): List<BottomMenuItem>{
-    val BottomMenuItemList = arrayListOf<BottomMenuItem>()
-    BottomMenuItemList.add(
+    val bottomMenuItemList = arrayListOf<BottomMenuItem>()
+    bottomMenuItemList.add(
         BottomMenuItem(
             label = "Explorer",
             icon = painterResource(R.drawable.cart)
         )
     )
-    BottomMenuItemList.add(
+    bottomMenuItemList.add(
         BottomMenuItem(
             label = "WishList",
             icon = painterResource(R.drawable.cart)
         )
     )
-    BottomMenuItemList.add(
+    bottomMenuItemList.add(
         BottomMenuItem(
             label = "My Course",
             icon = painterResource(R.drawable.cart)
         )
     )
-    BottomMenuItemList.add(
+    bottomMenuItemList.add(
         BottomMenuItem(
             label = "Account",
             icon = painterResource(R.drawable.cart)
         )
     )
-    return BottomMenuItemList
+    return bottomMenuItemList
 }
+
 data class BottomMenuItem(
     val label: String,
     val icon: Painter
 )
+
 data class Items(
     val title: String,
     val name: String,
@@ -169,6 +170,7 @@ data class Items(
     val score: Double,
     val picUrl: Int
 )
+
 @Composable
 fun ItemList() {
     val people: List<Items> = listOf(
@@ -190,11 +192,11 @@ fun ItemList() {
                     .background(Color.White, shape = RoundedCornerShape(10.dp))
                     .fillMaxWidth()
                     .clickable {
-                        println("Clicked On: \${item.name}")
+                        println("Clicked On: ${item.name}")
                     }
             ) {
                 ConstraintLayout(modifier = Modifier.height(IntrinsicSize.Max)) {
-                    val (topImg, title, owner,ownerIcon, price, score, scoreIcon) = createRefs()
+                    val (topImg, title, owner, ownerIcon, price, score, scoreIcon) = createRefs()
                     Image(painter = painterResource(R.drawable.cart),
                         contentDescription = null,
                         Modifier
@@ -241,7 +243,7 @@ fun ItemList() {
                             .padding(start = 16.dp, top = 16.dp)
                     )
                     Text(
-                        text = "\${item.price}",
+                        text = "$${item.price}",
                         fontWeight = FontWeight.Bold,
                         color = Color("#521c98".toColorInt()),
                         modifier = Modifier.constrainAs(price) {
@@ -276,6 +278,7 @@ fun ItemList() {
         }
     }
 }
+
 @Composable
 private fun SearchRow() {
     var text by rememberSaveable { mutableStateOf("") }
@@ -331,6 +334,7 @@ private fun SearchRow() {
         )
     }
 }
+
 @Composable
 fun Banner() {
     ConstraintLayout(
@@ -385,8 +389,8 @@ fun Banner() {
                 .padding(8.dp)
         )
     }
-
 }
+
 @Composable
 fun Categories() {
     Row(
@@ -507,13 +511,14 @@ fun Categories() {
         }
     }
 }
+
 @Composable
 fun PopularCourses() {
     Row(
         modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)
     ) {
         Text(
-            text = "PopularCourses",
+            text = "Popular Courses",
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             color = Color.Black,
@@ -527,17 +532,3 @@ fun PopularCourses() {
         )
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
