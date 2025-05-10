@@ -1,5 +1,9 @@
 package com.example.modernuidashboards
+
+import android.R.attr.label
+import android.R.attr.onClick
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -24,6 +28,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -31,6 +36,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -39,6 +45,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -52,22 +59,20 @@ import androidx.core.graphics.toColorInt
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        )
         setContent {
             MyUI()
         }
     }
 }
-@Composable
 @Preview(showBackground = true)
 @Composable
 fun MyUI() {
-    val scaffoldState = rememberScaffoldState() // Declare scaffoldState
-
     Scaffold(
-        scaffoldState = scaffoldState,
-        bottomBar = {
-            MyBottomBar()
-        }
+        bottomBar = { MyBottomBar() }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -86,20 +91,72 @@ fun MyUI() {
     }
 }
 
-
 @Composable
 fun MyBottomBar() {
-    TODO("Not yet implemented")
+    val BottomMenuItemsList = PrepareBottomMenu()
+    var selectedItem by remember { mutableStateOf("Profile") }
+
+    BottomAppBar(
+        cutoutShape = CircleShape,
+        backgroundColor = Color(0xFFF8F8F8),
+        elevation = 3.dp
+    ) {
+        BottomMenuItemsList.forEachIndexed { index, bottomMenuItem ->
+            BottomNavigationItem(
+                selected = (selectedItem == bottomMenuItem.label),
+                onClick = {
+                    selectedItem = bottomMenuItem.label
+                },
+                icon = {
+                    Icon(
+                        painter = bottomMenuItem.icon,
+                        contentDescription = bottomMenuItem.label,
+                        modifier = Modifier
+                            .height(20.dp)
+                            .width(20.dp)
+                    )
+                },
+                label = {
+                    Text(
+                        text = bottomMenuItem.label,
+                        modifier = Modifier.padding(4.dp)
+                    )
+                },
+                alwaysShowLabel = true,
+                enabled = true
+            )
+        }
+    }
 }
+
 @Composable
 fun PrepareBottomMenu(): List<BottomMenuItem>{
     val BottomMenuItemList = arrayListOf<BottomMenuItem>()
     BottomMenuItemList.add(
         BottomMenuItem(
             label = "Explorer",
-            icon = 
+            icon = painterResource(R.drawable.cart)
         )
     )
+    BottomMenuItemList.add(
+        BottomMenuItem(
+            label = "WishList",
+            icon = painterResource(R.drawable.cart)
+        )
+    )
+    BottomMenuItemList.add(
+        BottomMenuItem(
+            label = "My Course",
+            icon = painterResource(R.drawable.cart)
+        )
+    )
+    BottomMenuItemList.add(
+        BottomMenuItem(
+            label = "Account",
+            icon = painterResource(R.drawable.cart)
+        )
+    )
+    return BottomMenuItemList
 }
 data class BottomMenuItem(
     val label: String,
@@ -114,11 +171,11 @@ data class Items(
 )
 @Composable
 fun ItemList() {
-  val people: List<Items> = listOf(
-      Items("Quick Learn C# Language", "MD: Ratul Master", 128, 4.6, R.drawable.cart),
-      Items("Full Course Android Kotlin", "MD: Fazle Rabbi", 170, 4.9, R.drawable.cart),
-      Items("Quick Learn C# Language", "MD: Ratul Master", 128, 4.6, R.drawable.cart),
-  )
+    val people: List<Items> = listOf(
+        Items("Quick Learn C# Language", "MD: Ratul Master", 128, 4.6, R.drawable.cart),
+        Items("Full Course Android Kotlin", "MD: Fazle Rabbi", 170, 4.9, R.drawable.cart),
+        Items("Quick Learn C# Language", "MD: Ratul Master", 128, 4.6, R.drawable.cart),
+    )
     LazyRow(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
@@ -133,7 +190,7 @@ fun ItemList() {
                     .background(Color.White, shape = RoundedCornerShape(10.dp))
                     .fillMaxWidth()
                     .clickable {
-                        println("Clicked On: ${item.name}")
+                        println("Clicked On: \${item.name}")
                     }
             ) {
                 ConstraintLayout(modifier = Modifier.height(IntrinsicSize.Max)) {
@@ -151,14 +208,14 @@ fun ItemList() {
                     )
                     Text(
                         text = item.title,
-                       modifier =  Modifier
-                           .background(Color("#90000000".toColorInt()))
-                           .fillMaxWidth()
-                           .padding(6.dp)
-                           .constrainAs(title) {
-                               bottom.linkTo(topImg.bottom)
-                               start.linkTo(parent.start)
-                           },
+                        modifier =  Modifier
+                            .background(Color("#90000000".toColorInt()))
+                            .fillMaxWidth()
+                            .padding(6.dp)
+                            .constrainAs(title) {
+                                bottom.linkTo(topImg.bottom)
+                                start.linkTo(parent.start)
+                            },
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
                         color = Color.White,
@@ -184,7 +241,7 @@ fun ItemList() {
                             .padding(start = 16.dp, top = 16.dp)
                     )
                     Text(
-                        text = "${item.price}",
+                        text = "\${item.price}",
                         fontWeight = FontWeight.Bold,
                         color = Color("#521c98".toColorInt()),
                         modifier = Modifier.constrainAs(price) {
@@ -214,10 +271,7 @@ fun ItemList() {
                             }
                             .padding(end = 8.dp)
                     )
-
-
                 }
-
             }
         }
     }
@@ -225,7 +279,6 @@ fun ItemList() {
 @Composable
 private fun SearchRow() {
     var text by rememberSaveable { mutableStateOf("") }
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -291,7 +344,6 @@ fun Banner() {
             )
     ) {
         val (img, text, buttons) = createRefs()
-
         Image(
             painter = painterResource(id = R.drawable.snake_man),
             contentDescription = null,
@@ -333,6 +385,7 @@ fun Banner() {
                 .padding(8.dp)
         )
     }
+
 }
 @Composable
 fun Categories() {
@@ -474,6 +527,7 @@ fun PopularCourses() {
         )
     }
 }
+
 
 
 
