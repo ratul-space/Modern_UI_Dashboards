@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.graphics.toColorInt
+import com.example.modernuidashboards.contents.MyUI
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,28 +70,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun MyUI() {
-    Scaffold(
-        bottomBar = { MyBottomBar() }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
-                .verticalScroll(rememberScrollState())
-                .padding(paddingValues),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            SearchRow()
-            Banner()
-            Categories()
-            PopularCourses()
-            ItemList()
-        }
-    }
-}
+
 
 @Composable
 fun MyBottomBar() {
@@ -280,7 +260,7 @@ fun ItemList() {
 }
 
 @Composable
-private fun SearchRow() {
+internal fun SearchRow() {
     var text by rememberSaveable { mutableStateOf("") }
     Row(
         modifier = Modifier
